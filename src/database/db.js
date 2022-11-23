@@ -9,6 +9,7 @@ try {
     console.log("err mongoDB", err);
 };
 
-const db = mongoClient.db("Library");
+const db = mongoClient.db("library");
 
-export const usuarios = db.collection("users");
+export const users = db.collection("users");
+export const sessions = db.collection("users");
