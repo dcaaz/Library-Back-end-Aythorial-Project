@@ -1,11 +1,11 @@
-import { users, sessions } from "../database/db";
-import { signUpSchema } from "../models/userModel";
+import { users, sessions } from "../database/db.js";
+import { signUpSchema } from "../models/userModel.js";
 
 import bcrypt from "bcrypt";
 import { v4 as uuidV4 } from "uuid";
 
 export async function postSignUp (req, res) {
-    const { name, email, password, photograph } = req.body;
+    const { name, email, password, imageURL } = req.body;
 
     try {
 
@@ -16,7 +16,7 @@ export async function postSignUp (req, res) {
         }
 
         const validation = signUpSchema.validate(
-            { name, email, password, photograph },
+            { name, email, password, imageURL },
             { abortEarly: false }
         );
 
@@ -25,26 +25,56 @@ export async function postSignUp (req, res) {
             return res.status(400).send(errors);
         };
 
-        const hidePassword = bcrypt.hashSync(senha, 10); //criptografar
+        const hidePassword = bcrypt.hashSync(password, 10); //criptografar
 
         const newProfile =
         {
-            nome,
+            name,
             email,
-            senha: hidePassword,
-            photograph
+            password: hidePassword,
+            imageURL
         };
 
-        await usuarios.insertOne(newProfile); // inserindo no mongo
+        await users.insertOne(newProfile); // inserindo no mongo
         res.sendStatus(201);
     } catch (err) {
+        console.log("err", err)
         res.sendStatus(500);
     };
 
 };
 
 export async function postSignIn (req, res) {
+    const { email, password } = req.body;
+
+    const token = uuidV4(); 
+
     try {
+
+        const userExist = await users.findOne({ email });
+
+        if (!userExist) {
+            return res.status(401).send({ message: "Esse usuário já existe" });
+        }
+
+        const passwordOk = bcrypt.compareSync(password, userExist.password);
+
+        if (!passwordOk) {
+            return res.status(400).send({ message: "Senha incorreta" });
+        }
+
+        const sessionUser = await sessions.findOne({ userId: userExist._id });
+
+        if (sessionUser) {
+            return res.status(401).send({ message: "Você já está logado, saia para logar novamente" });
+        };
+
+        await sessions.insertOne({
+            token,
+            userId: userExist._id
+        });
+
+        res.send({ token });
     } catch (err) {
         res.sendStatus(500);
     };

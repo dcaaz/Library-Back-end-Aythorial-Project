@@ -12,4 +12,4 @@ try {
 const db = mongoClient.db("library");
 
 export const users = db.collection("users");
-export const sessions = db.collection("users");
+export const sessions = db.collection("sessions");
