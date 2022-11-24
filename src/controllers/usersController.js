@@ -1,41 +1,24 @@
 import { users, sessions } from "../database/db.js";
-import { signUpSchema } from "../models/userModel.js";
 
 import bcrypt from "bcrypt";
 import { v4 as uuidV4 } from "uuid";
 
 export async function postSignUp (req, res) {
-    const { name, email, password, imageURL } = req.body;
+    
+    const user = res.locals.user;
+    console.log("user", user)
 
     try {
 
-        const userExist = await users.findOne({ email });
+        /*  const userExist = await users.findOne({ email });
 
-        if (userExist) {
+      if (userExist) {
             return res.status(401).send({ message: "Esse usuário já existe" });
-        }
+        }/*/
 
-        const validation = signUpSchema.validate(
-            { name, email, password, imageURL },
-            { abortEarly: false }
-        );
+        const hidePassword = bcrypt.hashSync(user.password, 10); //criptografar
 
-        if (validation.error) {
-            const errors = validation.error.details.map(detail => detail.message);
-            return res.status(400).send(errors);
-        };
-
-        const hidePassword = bcrypt.hashSync(password, 10); //criptografar
-
-        const newProfile =
-        {
-            name,
-            email,
-            password: hidePassword,
-            imageURL
-        };
-
-        await users.insertOne(newProfile); // inserindo no mongo
+        await users.insertOne(   { ...user, password: hidePassword }         ); // inserindo no mongo
         res.sendStatus(201);
     } catch (err) {
         console.log("err", err)
@@ -67,7 +50,7 @@ export async function postSignIn (req, res) {
 
         if (sessionUser) {
             return res.status(401).send({ message: "Você já está logado, saia para logar novamente" });
-        };
+        };   
 
         await sessions.insertOne({
             token,
