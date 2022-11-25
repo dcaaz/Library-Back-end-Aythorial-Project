@@ -80,3 +80,19 @@ export async function postSignIn (req, res) {
     };
 
 };
+
+export async function deleteSignIn(req, res) {
+    const token = req.params;
+    console.log(token.token)
+  
+    try {
+      const sessionExists = await sessions.findOne({ token: token.token });
+      if (!sessionExists) {
+        return res.status(404).send("Esse usuário nem sequer existe :s");
+      }
+      await sessions.deleteOne({ token: token.token });
+      res.status(200).send("User deslogado com sucesso");
+    } catch (err) {
+      console.log(err);
+    }
+  };
