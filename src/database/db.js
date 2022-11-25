@@ -13,3 +13,5 @@ const db = mongoClient.db("library");
 
 export const users = db.collection("users");
 export const sessions = db.collection("sessions");
+export const products = db.collection("products");
+export const cart = db.collection("cart");

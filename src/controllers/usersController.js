@@ -1,6 +1,4 @@
 import { users, sessions } from "../database/db.js";
-import { signUpSchema } from "../models/userModel.js";
-
 import bcrypt from "bcrypt";
 import { v4 as uuidV4 } from "uuid";
 
@@ -14,16 +12,6 @@ export async function postSignUp (req, res) {
         if (userExist) {
             return res.status(401).send({ message: "Esse usuário já existe" });
         }
-
-        const validation = signUpSchema.validate(
-            { name, email, password, imageURL },
-            { abortEarly: false }
-        );
-
-        if (validation.error) {
-            const errors = validation.error.details.map(detail => detail.message);
-            return res.status(400).send(errors);
-        };
 
         const hidePassword = bcrypt.hashSync(password, 10); //criptografar
 
