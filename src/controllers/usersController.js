@@ -19,6 +19,7 @@ export async function postSignUp(req, res) {
       email,
       password: hidePassword,
       imageURL,
+      type : !type ? "user" : type,
     };
 
     await usersCollection.insertOne(newProfile); // inserindo no mongo
@@ -87,21 +88,23 @@ export async function deleteSignIn(req, res) {
 }
 
 // mudança de dados do usuário
-export async function changeUserData() {
-  const field = req.params;
+export async function changeUserData(req,res) {
+  const field = req.body;
+  const user = res.locals.user;
+
   if (!field) {
     return res.status(404).send("Nenhum campo foi mandado.");
   }
 
   try {
-    const isThereAnyField = await users.find({ field });
+    const isThereAnyField = await usersCollection.find({ field });
     if (!isThereAnyField)
       return res
         .status(404)
         .send("Nenhum campo com esse nome foi encontrado no banco de dados");
 
-    await usersCollection.updateOne({ field }, { $set: field });
-    res.status(400).send("Campo atualizado com sucesso");
+    await usersCollection.updateOne({ _id: user._id }, { $set: field });
+    res.status(200).send("Campo atualizado com sucesso");
   } catch (err) {
     console.log(err);
   }

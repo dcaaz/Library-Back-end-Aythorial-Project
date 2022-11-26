@@ -17,6 +17,6 @@ userRouter.post("/sign-in", SignInModelValidation, postSignIn);
 
 userRouter.delete("/logout/:token", tokenValidation, deleteSignIn);
 
-userRouter.put("/change-data/:campo", tokenValidation, changeUserData);
+userRouter.put("/change-data/", tokenValidation, changeUserData);
 
 export default userRouter;
