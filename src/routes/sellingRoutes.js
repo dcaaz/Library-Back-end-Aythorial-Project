@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { postCart, getCart, deleteItemsCart } from "../controllers/sellingControllers.js";
+import { postCart, getCart, deleteItemsCart, postSale } from "../controllers/sellingControllers.js";
 import { tokenValidation } from "../middlewares/tokenValidationMiddlewares.js";
 import ProductModelValidation from "../middlewares/productModelValidationMiddleware.js";
 
@@ -12,5 +12,7 @@ sellingRouter.post("/post-cart", ProductModelValidation, postCart);
 sellingRouter.get("/get-cart", getCart);
 
 sellingRouter.delete("/deleteCartItem/:itemId", deleteItemsCart);
+
+sellingRouter.post("/post-sale", postSale)
 
 export default sellingRouter;

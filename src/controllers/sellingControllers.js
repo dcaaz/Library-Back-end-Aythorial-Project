@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { cartCollection, productsCollection } from "../database/db.js";
+import { cartCollection, productsCollection, salesCollection } from "../database/db.js";
 
 //colocar itens no carrinho!
 //precisa receber o produto no body e token no headers
@@ -43,13 +43,30 @@ export async function deleteItemsCart(req, res) {
 
 //postar venda
 // informação pelo body: objeto com informação do cliente e array contendo os ids dos objetos comprados
-/* export async function postSale(req,res){
-  const info = req.body
-  try{
+ export async function postSale(req,res){
+  const {clientInfo, boughtItems, transactionInfo} = req.body;
+  const user = res.locals.user;
 
+  try{
+    boughtItems.forEach( async (item) =>  {
+      const product = await productsCollection.findOne({_id: item}).toArray()
+      const plusOneSale = {sales: product.sales ++};
+      await productsCollection.updateOne({_id: item}, {$set: plusOneSale});
+    });
+    const sale = {
+      userId: user._id,
+      transactionInfo: transactionInfo,
+      boughtItems: boughtItems,
+      clientInfo: clientInfo
+    };
+    await salesCollection.insertOne(sale);
+    res.status(200).send("Venda feita com sucesso!")
 
   }catch(err){
     console.log(err)
   }
 }
- */
+ //objeto de venda: {userId, transactionInfo, boughtItems, userInfo}
+ // transactionInfo: data da compra; tipo de pagamento; tipo de entrega
+ // boughtItems: array com os ids dos objetos comprados
+ //userInfo: informações que o usuário forneceu para a compra (CPF, CEP, endereço, número de cartão, etc.)
