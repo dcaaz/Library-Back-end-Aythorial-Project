@@ -6,7 +6,7 @@ export async function tokenValidation(req, res, next){ //função interceptadora
     const token = authorization?.replace("Bearer ", "");
 
     if (!token) {
-        return res.sendStatus(401);
+        return res.status(401).send("Nenhuma token foi enviada")
     }
 
     try{
