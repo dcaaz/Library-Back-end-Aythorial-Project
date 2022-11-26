@@ -47,17 +47,21 @@ export async function postSignUp (req, res) {
 export async function postSignIn (req, res) {
     const { email, password } = req.body;
 
+    console.log("password", password)
+
     const token = uuidV4(); 
 
     try {
 
         const userExist = await users.findOne({ email });
+        console.log("user", userExist)
 
         if (!userExist) {
             return res.status(401).send({ message: "Esse usuário já existe" });
         }
 
         const passwordOk = bcrypt.compareSync(password, userExist.password);
+        console.log("ok", passwordOk)
 
         if (!passwordOk) {
             return res.status(400).send({ message: "Senha incorreta" });
@@ -65,7 +69,7 @@ export async function postSignIn (req, res) {
 
         const sessionUser = await sessions.findOne({ userId: userExist._id });
 
-        if (sessionUser) {
+        if (!sessionUser) {
             return res.status(401).send({ message: "Você já está logado, saia para logar novamente" });
         };
 
@@ -82,7 +86,7 @@ export async function postSignIn (req, res) {
 };
 
 export async function deleteSignIn(req, res) {
-    const token = req.params;
+     const token = req.params;
     console.log(token.token)
   
     try {
