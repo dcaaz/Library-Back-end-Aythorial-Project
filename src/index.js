@@ -8,7 +8,7 @@ import noUserRouter from "./routes/noUserRoutes.js";
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(json());
 
 app.use(noUserRouter);
 
