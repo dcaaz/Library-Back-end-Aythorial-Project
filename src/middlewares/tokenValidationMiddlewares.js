@@ -1,7 +1,6 @@
 import { sessionsCollection, usersCollection } from "../database/db.js";
 
 export async function tokenValidation(req, res, next){ //função interceptadora
-
     const { authorization } = req.headers;
 
     const token = authorization?.replace("Bearer ", "");

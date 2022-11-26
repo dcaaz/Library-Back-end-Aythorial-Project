@@ -9,7 +9,7 @@ export async function postSignUp(req, res) {
     const userExist = await usersCollection.findOne({ email });
 
     if (userExist) {
-      return res.status(401).send({ message: "Esse usuário já existe" });
+      return res.status(401).send({ message: "Esse e-mail já está sendo usado." });
     }
 
     const hidePassword = bcrypt.hashSync(password, 10); //criptografar
