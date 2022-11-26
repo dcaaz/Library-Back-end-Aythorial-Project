@@ -33,16 +33,17 @@ export async function postSignUp(req, res) {
 export async function postSignIn(req, res) {
   const { email, password } = req.body;
 
-  const token = uuidV4();
+    const token = uuidV4(); 
 
-  try {
-    const userExist = await usersCollection.findOne({ email });
+    try {
+
+        const userExist = await users.findOne({ email });
 
     if (!userExist) {
       return res.status(401).send({ message: "Esse usuário não existe" });
     }
 
-    const passwordOk = bcrypt.compareSync(password, userExist.password);
+        const passwordOk = bcrypt.compareSync(password, userExist.password);
 
     if (!passwordOk) {
       return res.status(400).send({ message: "Senha incorreta" });
@@ -52,11 +53,9 @@ export async function postSignIn(req, res) {
       userId: userExist._id,
     });
 
-    if (sessionUser) {
-      return res
-        .status(401)
-        .send({ message: "Você já está logado, saia para logar novamente" });
-    }
+        if (sessionUser) {
+            return res.status(401).send({ message: "Você já está logado, saia para logar novamente" });
+        };
 
     await sessionsCollection.insertOne({
       token,
@@ -71,21 +70,19 @@ export async function postSignIn(req, res) {
 
 //logout :D
 export async function deleteSignIn(req, res) {
-  const { authorization } = req.headers;
-
-  const token = authorization?.replace("Bearer ", "");
-
-  try {
-    const sessionExists = await sessions.findOne({ token: token.token });
-    if (!sessionExists) {
-      return res.status(404).send("Esse usuário nem sequer existe :s");
+    const token = req.params;
+    console.log(token.token)
+  
+    try {
+      const sessionExists = await sessions.findOne({ token: token.token });
+      if (!sessionExists) {
+        return res.status(404).send("Esse usuário nem sequer existe :s");
+      }
+      await sessions.deleteOne({ token: token.token });
+      res.status(200).send("User deslogado com sucesso");
+    } catch (err) {
+      console.log(err);
     }
-    await sessionsCollection.deleteOne({ token: token.token });
-    res.status(200).send("User deslogado com sucesso");
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 // mudança de dados do usuário
 export async function changeUserData(req,res) {
@@ -109,4 +106,5 @@ export async function changeUserData(req,res) {
     console.log(err);
   }
 }
+
 
