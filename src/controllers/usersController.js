@@ -1,92 +1,76 @@
-import { users, sessions } from "../database/db.js";
-import { signUpSchema } from "../models/userModel.js";
-
+import { usersCollection, sessionsCollection } from "../database/db.js";
 import bcrypt from "bcrypt";
 import { v4 as uuidV4 } from "uuid";
 
-export async function postSignUp (req, res) {
-    const { name, email, password, imageURL } = req.body;
+export async function postSignUp(req, res) {
+  const { name, email, password, imageURL, type } = res.locals.user;
 
-    try {
+  try {
+    const userExist = await usersCollection.findOne({ email });
 
-        const userExist = await users.findOne({ email });
+    if (userExist) {
+      return res.status(401).send({ message: "Esse e-mail já está sendo usado." });
+    }
 
-        if (userExist) {
-            return res.status(401).send({ message: "Esse usuário já existe" });
-        }
+    const hidePassword = bcrypt.hashSync(password, 10); //criptografar
 
-        const validation = signUpSchema.validate(
-            { name, email, password, imageURL },
-            { abortEarly: false }
-        );
-
-        if (validation.error) {
-            const errors = validation.error.details.map(detail => detail.message);
-            return res.status(400).send(errors);
-        };
-
-        const hidePassword = bcrypt.hashSync(password, 10); //criptografar
-
-        const newProfile =
-        {
-            name,
-            email,
-            password: hidePassword,
-            imageURL
-        };
-
-        await users.insertOne(newProfile); // inserindo no mongo
-        res.sendStatus(201);
-    } catch (err) {
-        console.log("err", err)
-        res.sendStatus(500);
+    const newProfile = {
+      name,
+      email,
+      password: hidePassword,
+      imageURL,
+      type : !type ? "user" : type,
     };
 
-};
+    await usersCollection.insertOne(newProfile); // inserindo no mongo
+    res.sendStatus(201);
+  } catch (err) {
+    console.log("err", err);
+    res.sendStatus(500);
+  }
+}
 
-export async function postSignIn (req, res) {
-    const { email, password } = req.body;
-
-    console.log("password", password)
+export async function postSignIn(req, res) {
+  const { email, password } = req.body;
 
     const token = uuidV4(); 
 
     try {
 
         const userExist = await users.findOne({ email });
-        console.log("user", userExist)
 
-        if (!userExist) {
-            return res.status(401).send({ message: "Esse usuário já existe" });
-        }
+    if (!userExist) {
+      return res.status(401).send({ message: "Esse usuário não existe" });
+    }
 
         const passwordOk = bcrypt.compareSync(password, userExist.password);
-        console.log("ok", passwordOk)
 
-        if (!passwordOk) {
-            return res.status(400).send({ message: "Senha incorreta" });
-        }
+    if (!passwordOk) {
+      return res.status(400).send({ message: "Senha incorreta" });
+    }
 
-        const sessionUser = await sessions.findOne({ userId: userExist._id });
+    const sessionUser = await sessionsCollection.findOne({
+      userId: userExist._id,
+    });
 
-        if (!sessionUser) {
+        if (sessionUser) {
             return res.status(401).send({ message: "Você já está logado, saia para logar novamente" });
         };
 
-        await sessions.insertOne({
-            token,
-            userId: userExist._id
-        });
+    await sessionsCollection.insertOne({
+      token,
+      userId: userExist._id,
+    });
 
-        res.send({ token });
-    } catch (err) {
-        res.sendStatus(500);
-    };
+    res.send({ token, name: userExist.name, imageURL: userExist.imageURL });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+}
 
-};
-
+//logout :D
 export async function deleteSignIn(req, res) {
-     const token = req.params;
+    const token = req.params;
     console.log(token.token)
   
     try {

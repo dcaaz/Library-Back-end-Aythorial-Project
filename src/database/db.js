@@ -1,6 +1,9 @@
 import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
 
-const mongoClient = new MongoClient("mongodb://localhost:27017"); //porta do mongo
+dotenv.config();
+
+const mongoClient = new MongoClient(process.env.MONGO_URI); //porta do mongo
 
 try {
     await mongoClient.connect();
@@ -11,5 +14,8 @@ try {
 
 const db = mongoClient.db("library");
 
-export const users = db.collection("users");
-export const sessions = db.collection("sessions");
+export const usersCollection = db.collection("users");
+export const sessionsCollection = db.collection("sessions");
+export const productsCollection = db.collection("products");
+export const cartCollection = db.collection("cart");
+export const salesCollection = db.collection("sales");
