@@ -83,7 +83,7 @@ export async function deleteSignIn(req, res) {
     } catch (err) {
       console.log(err);
     }
-
+  }
 // mudança de dados do usuário
 export async function changeUserData(req,res) {
   const field = req.body;
@@ -106,5 +106,3 @@ export async function changeUserData(req,res) {
     console.log(err);
   }
 }
-
-
