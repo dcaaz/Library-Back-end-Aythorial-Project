@@ -1,18 +1,17 @@
-import { sessions, users } from "../database/db.js";
+import { sessionsCollection, usersCollection } from "../database/db.js";
 
 export async function tokenValidation(req, res, next){ //função interceptadora
-
     const { authorization } = req.headers;
 
     const token = authorization?.replace("Bearer ", "");
 
     if (!token) {
-        return res.sendStatus(401);
+        return res.status(401).send("Nenhuma token foi enviada")
     }
 
     try{
 
-        const session = await sessions.findOne({token});
+        const session = await sessionsCollection.findOne({token});
 
         if(!session){
             return res.sendStatus(401);
@@ -20,13 +19,13 @@ export async function tokenValidation(req, res, next){ //função interceptadora
 
         const id = session?.userId;
 
-        const user = await users.findOne({ _id: id});
+        const user = await usersCollection.findOne({ _id: id});
 
         if (!user) {
             return res.sendStatus(401);
         }
 
-        req.usuario = usuario;
+       res.locals.user = user
 
     } catch (err) {
         console.log(err);
