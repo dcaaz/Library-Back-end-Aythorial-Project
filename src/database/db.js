@@ -1,6 +1,9 @@
 import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
 
-const mongoClient = new MongoClient("mongodb://localhost:27017"); //porta do mongo
+dotenv.config();
+
+const mongoClient = new MongoClient(process.env.MONGO_URI); //porta do mongo
 
 try {
     await mongoClient.connect();
