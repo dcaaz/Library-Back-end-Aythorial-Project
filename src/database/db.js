@@ -11,7 +11,8 @@ try {
 
 const db = mongoClient.db("library");
 
-export const users = db.collection("users");
-export const sessions = db.collection("sessions");
-export const products = db.collection("products");
-export const cart = db.collection("cart");
+export const usersCollection = db.collection("users");
+export const sessionsCollection = db.collection("sessions");
+export const productsCollection = db.collection("products");
+export const cartCollection = db.collection("cart");
+export const salesCollection = db.collection("sales");

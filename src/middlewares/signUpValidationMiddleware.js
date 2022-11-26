@@ -1,15 +1,24 @@
-import { signUpSchema } from "../models/userModel.js";
+import { signUpSchema } from "../models/signUpModel.js";
 
 export default function SignUpModelValidation(req, res, next) {
-  const { name, email, password, imageURL } = req.body;
-  const validation = signUpSchema.validate(
-    { name, email, password, imageURL },
-    { abortEarly: false }
-  );
+  const { name, email, password, imageURL, type } = req.body;
 
-  if (validation.error) {
-    const errors = validation.error.details.map((detail) => detail.message);
+  const user = {
+    name,
+    email,
+    password,
+    imageURL,
+    type : !type ? "user" : type,
+  };
+
+  const {error} = signUpSchema.validate(user, {abortEarly: false});
+
+  if (error){
+    const errors = error.details.map(detail => detail.message);
     return res.status(400).send(errors);
   }
+
+  res.locals.user = user;
+
   next();
 }
