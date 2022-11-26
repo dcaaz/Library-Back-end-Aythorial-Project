@@ -2,8 +2,20 @@ import { productsCollection } from "../database/db.js";
 
 //não precisa de token, porque qualquer um pode entrar em /market e ver os produtos, mesmo sem estar logado
 export async function getProducts(req, res) {
+
   try {
     const allProducts = await productsCollection.find().toArray();
+    return res.status(201).send(allProducts);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function getCategoryProducts(req, res) {
+  const category = req.params;
+  
+  try {
+    const allProducts = await productsCollection.find(category).toArray();
     return res.status(201).send(allProducts);
   } catch (err) {
     console.log(err);
