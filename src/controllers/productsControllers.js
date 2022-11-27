@@ -47,10 +47,8 @@ export async function postProducts(req, res) {
   const product = req.body;
 
   try {
-    const doesProductExists = await productsCollection.find({
-      title: product.title,
-    });
-    if (doesProductExists) {
+    const doesProductExists = await productsCollection.find(product).toArray();
+    if (!doesProductExists) {
       return res.status(400).send("Esse produto já existe.");
     }
     await productsCollection.insertOne({ ...product, sales: 0 });

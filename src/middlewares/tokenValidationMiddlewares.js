@@ -8,7 +8,6 @@ export async function tokenValidation(req, res, next){ //função interceptadora
     if (!token) {
         return res.status(401).send("Nenhuma token foi enviada")
     }
-    console.log(token)
 
     try{
 
