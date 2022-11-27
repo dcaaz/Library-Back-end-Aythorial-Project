@@ -91,21 +91,21 @@ export async function deleteSignIn(req, res) {
 }
 // mudança de dados do usuário
 export async function changeUserData(req, res) {
-  const field = req.body;
+  const fields = req.body;
   const user = res.locals.user;
 
-  if (!field) {
+  if (!fields) {
     return res.status(404).send("Nenhum campo foi mandado.");
   }
 
   try {
-    const isThereAnyField = await usersCollection.find({ field });
-    if (!isThereAnyField)
+    const isThereAnyFields = await usersCollection.find({ fields });
+    if (!isThereAnyFields)
       return res
         .status(404)
         .send("Nenhum campo com esse nome foi encontrado no banco de dados");
 
-    await usersCollection.updateOne({ _id: user._id }, { $set: field });
+    await usersCollection.updateOne({ _id: user._id }, { $set: fields });
     res.status(200).send("Campo atualizado com sucesso");
   } catch (err) {
     console.log(err);

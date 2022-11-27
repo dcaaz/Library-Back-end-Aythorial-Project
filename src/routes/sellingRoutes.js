@@ -7,7 +7,7 @@ const sellingRouter = Router();
 
 sellingRouter.use(tokenValidation);
 
-sellingRouter.post("/post-cart", ProductModelValidation, postCart);
+sellingRouter.post("/post-cart", postCart);
 
 sellingRouter.get("/get-cart", getCart);
 

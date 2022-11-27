@@ -3,14 +3,16 @@ import { cartCollection, productsCollection, salesCollection } from "../database
 
 //colocar itens no carrinho!
 //precisa receber o produto no body e token no headers
+// 
 export async function postCart(req, res) {
   const product = req.body;
   const user = res.locals.user;
 
   try {
     //colocado no carrinho com o id do usuário, para que, quando quiser dar o get, pegar somente os itens do carrinho *daquele usuário*
-    await cartCollection.insertOne({ ...product, userId: user._id });
-    return res.status(200).send("Produto postado com suceso.");
+    delete product.description;
+    await cartCollection.insertOne({ ...product, userId: user._id  }).toArray();
+    return res.status(200).send("Produto postado no carrinho do usuário com suceso.");
   } catch (err) {
     console.log(err);
   }
@@ -19,7 +21,7 @@ export async function postCart(req, res) {
 export async function getCart(req, res) {
   const user = res.locals.user;
   try {
-    const userCartProducts = await cartCollection.find({ userId: user._id });
+    const userCartProducts = await cartCollection.find({ userId: user._id }).toArray();
     return res.status(200).send(userCartProducts);
   } catch (err) {
     console.log(err)

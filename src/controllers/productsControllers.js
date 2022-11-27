@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { productsCollection } from "../database/db.js";
 
 //não precisa de token, porque qualquer um pode entrar em /market e ver os produtos, mesmo sem estar logado
@@ -23,7 +24,15 @@ export async function getCategoryProducts(req, res) {
 }
 
 //pesquisa por input
-export async function getSearchedProducts(req, res) {}
+export async function getProductById(req, res) {
+  const id = req.params;
+  try{
+    const product = await productsCollection.findOne({_id: ObjectId(id)}).toArray();
+    return res.status(200).send(product)
+  }catch(err){
+    console.log(err)
+  }
+}
 
 //apenas para admins
 export async function postProducts(req, res) {
