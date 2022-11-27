@@ -3,10 +3,12 @@ import { getProducts, getProductById, getCategoryProducts } from "../controllers
 
 const noUserRouter = Router();
 
+noUserRouter.get("/get-product-by-id/:bookId", getProductById);
+
 noUserRouter.get("/get-products/", getProducts);
 
 noUserRouter.get("/get-products/:category", getCategoryProducts);
 
-noUserRouter.get("/get-product-by-id/:bookId", getProductById);
+
 
 export default noUserRouter

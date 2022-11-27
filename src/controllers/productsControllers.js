@@ -26,8 +26,9 @@ export async function getCategoryProducts(req, res) {
 //pesquisa por input
 export async function getProductById(req, res) {
   const id = req.params;
+  console.log(id.bookId)
   try{
-    const product = await productsCollection.findOne({_id: ObjectId(id)}).toArray();
+    const product = await productsCollection.findOne({_id: ObjectId(id.bookId)}).toArray();
     return res.status(200).send(product)
   }catch(err){
     console.log(err)
