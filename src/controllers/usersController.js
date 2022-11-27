@@ -74,8 +74,9 @@ export async function postSignIn(req, res) {
 
 //logout :D
 export async function deleteSignIn(req, res) {
-  const token = req.params;
-  console.log(token.token);
+  const { authorization } = req.headers;
+
+  const token = authorization?.replace("Bearer ", "");
 
   try {
     const sessionExists = await sessions.findOne({ token: token.token });

@@ -15,7 +15,7 @@ userRouter.post("/sign-up", SignUpModelValidation, postSignUp);
 
 userRouter.post("/sign-in", SignInModelValidation, postSignIn);
 
-userRouter.delete("/logout/:token", tokenValidation, deleteSignIn);
+userRouter.delete("/logout", tokenValidation, deleteSignIn);
 
 userRouter.put("/change-data/", tokenValidation, changeUserData);
 
