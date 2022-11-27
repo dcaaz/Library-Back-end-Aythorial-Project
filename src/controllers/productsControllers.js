@@ -3,7 +3,6 @@ import { productsCollection } from "../database/db.js";
 
 //não precisa de token, porque qualquer um pode entrar em /market e ver os produtos, mesmo sem estar logado
 export async function getProducts(req, res) {
-
   try {
     const allProducts = await productsCollection.find().toArray();
     return res.status(201).send(allProducts);
@@ -14,7 +13,7 @@ export async function getProducts(req, res) {
 
 export async function getCategoryProducts(req, res) {
   const category = req.params;
-  
+
   try {
     const allProducts = await productsCollection.find(category).toArray();
     return res.status(201).send(allProducts);
@@ -26,12 +25,13 @@ export async function getCategoryProducts(req, res) {
 //pesquisa por input
 export async function getProductById(req, res) {
   const id = req.params;
-  console.log(id.bookId)
-  try{
-    const product = await productsCollection.findOne({_id: ObjectId(id.bookId)}).toArray();
-    return res.status(200).send(product)
-  }catch(err){
-    console.log(err)
+  console.log(id.bookId);
+  try {
+    const product = await productsCollection
+      .findOne({ _id: ObjectId(id.bookId) });
+    return res.status(200).send(product);
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -52,5 +52,3 @@ export async function postProducts(req, res) {
     console.log(err);
   }
 }
-
-
