@@ -79,11 +79,11 @@ export async function deleteSignIn(req, res) {
   const token = authorization?.replace("Bearer ", "");
 
   try {
-    const sessionExists = await sessions.findOne({ token: token.token });
+    const sessionExists = await sessionsCollection.findOne({ token: token });
     if (!sessionExists) {
       return res.status(404).send("Esse usuário nem sequer existe :s");
     }
-    await sessions.deleteOne({ token: token.token });
+    await sessionsCollection.deleteOne({ token: token.token });
     res.status(200).send("User deslogado com sucesso");
   } catch (err) {
     console.log(err);
