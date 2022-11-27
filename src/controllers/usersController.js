@@ -83,7 +83,7 @@ export async function deleteSignIn(req, res) {
     if (!sessionExists) {
       return res.status(404).send("Esse usuário nem sequer existe :s");
     }
-    await sessionsCollection.deleteOne({ token: token.token });
+    await sessionsCollection.deleteOne({ token: token });
     res.status(200).send("User deslogado com sucesso");
   } catch (err) {
     console.log(err);
