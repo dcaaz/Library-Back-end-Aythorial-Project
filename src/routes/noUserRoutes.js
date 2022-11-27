@@ -7,6 +7,6 @@ noUserRouter.get("/get-products/", getProducts);
 
 noUserRouter.get("/get-products/:category", getCategoryProducts);
 
-noUserRouter.get("/get-product-by-id", getProductById);
+noUserRouter.get("/get-product-by-id/:bookId", getProductById);
 
 export default noUserRouter
