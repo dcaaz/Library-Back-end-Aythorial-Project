@@ -1,9 +1,13 @@
 import joi from "joi";
 
 const saleModel = joi.object({
-    transactionInfo: joi.object().required(),
-    boughtItems: joi.array().required(),
-    userInfo: joi.object().required()
+    clientInfo: joi.object({
+        name: joi.string().required(),
+        telefone: joi.number().required().min(11).telefone(),
+        address: joi.string().required().min(8),
+        salePrice: joi.string().required()
+    }),
+    boughtItems: joi.array().required()
 });
 
 export default saleModel;
