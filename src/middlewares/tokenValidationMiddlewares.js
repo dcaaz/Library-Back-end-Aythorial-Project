@@ -12,9 +12,8 @@ export async function tokenValidation(req, res, next){ //função interceptadora
     try{
 
         const session = await sessionsCollection.findOne({token});
-
         if(!session){
-            return res.sendStatus(401);
+            return res.status(401).send("Não existe sessão com essa token");
         }
 
         const id = session?.userId;
@@ -22,7 +21,7 @@ export async function tokenValidation(req, res, next){ //função interceptadora
         const user = await usersCollection.findOne({ _id: id});
 
         if (!user) {
-            return res.sendStatus(401);
+            return res.status(401).send("Esse usuário não existe")
         }
 
        res.locals.user = user

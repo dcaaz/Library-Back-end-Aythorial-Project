@@ -74,15 +74,16 @@ export async function postSignIn(req, res) {
 
 //logout :D
 export async function deleteSignIn(req, res) {
-  const token = req.params;
-  console.log(token.token);
+  const { authorization } = req.headers;
+
+  const token = authorization?.replace("Bearer ", "");
 
   try {
-    const sessionExists = await sessions.findOne({ token: token.token });
+    const sessionExists = await sessionsCollection.findOne({ token: token });
     if (!sessionExists) {
       return res.status(404).send("Esse usuário nem sequer existe :s");
     }
-    await sessions.deleteOne({ token: token.token });
+    await sessionsCollection.deleteOne({ token: token });
     res.status(200).send("User deslogado com sucesso");
   } catch (err) {
     console.log(err);
@@ -90,21 +91,21 @@ export async function deleteSignIn(req, res) {
 }
 // mudança de dados do usuário
 export async function changeUserData(req, res) {
-  const field = req.body;
+  const fields = req.body;
   const user = res.locals.user;
 
-  if (!field) {
+  if (!fields) {
     return res.status(404).send("Nenhum campo foi mandado.");
   }
 
   try {
-    const isThereAnyField = await usersCollection.find({ field });
-    if (!isThereAnyField)
+    const isThereAnyFields = await usersCollection.find({ fields });
+    if (!isThereAnyFields)
       return res
         .status(404)
         .send("Nenhum campo com esse nome foi encontrado no banco de dados");
 
-    await usersCollection.updateOne({ _id: user._id }, { $set: field });
+    await usersCollection.updateOne({ _id: user._id }, { $set: fields });
     res.status(200).send("Campo atualizado com sucesso");
   } catch (err) {
     console.log(err);
